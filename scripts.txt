@@ -1,0 +1,12 @@
+# test cmd
+sys
+sys fw_test_01
+#
+vlan batch 10 20
+#
+int vlanif 20
+ip add 192.168.1.1 24
+#
+return
+save
+y
