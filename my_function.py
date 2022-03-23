@@ -76,20 +76,29 @@ class Myfunction(object):
                     f.write(list_target[i])
             f.close()
 
-    def write_script_log(self, script_list):
+    def write_log(self, logs):
+    	"""
+            生成logs记录文本
+        :param logs: 列表类型，需要写入的信息列表
+        """
         folder = os.path.exists('data')
         # 判断是否存在data文件夹
         if not folder:
             os.mkdir('data')
         with open(r'data/run_scripts_logs.txt', 'a', encoding='utf-8') as f:
-            for i in range(len(script_list) - 1):
-                if i == 0:
-                    f.write(
-                        "脚本运行时间：%s，共计命令：%d" % (
-                            str(time.strftime("%Y-%m-%d, %H:%M:%S")), len(script_list)) + '\n')
-                    f.write(script_list[i])
-                else:
-                    f.write(script_list[i])
+	        	if type(logs) == 'list':
+		            for i in range(len(logs) - 1):
+		                if i == 0:
+		                    f.write(
+		                        "脚本运行时间：%s，共计命令：%d" % (
+		                            str(time.strftime("%Y-%m-%d, %H:%M:%S")), len(logs)) + '\n')
+		                    f.write(logs[i])
+		                else:
+		                    f.write(logs[i])
+		         elif type(logs) == 'str':
+		         	f.write("%s,%s" % (str(time.strftime("%Y-%m-%d, %H:%M:%S")),logs))
+		         else:
+		         	f.write('日志记录错误，请检查日志类型！')
             f.write('\n')
             f.close()
 
@@ -214,7 +223,7 @@ class Myfunction(object):
                         if count == 2:
                             x = item[7:d + 1]
                             # print(d)
-                            new_item = item.replace(x, ' ') + '\n'
+                            new_item = item.replace(x, ' ')
                             fw_chian_ip.append(new_item)
         return fw_chian_ip
 
@@ -227,15 +236,22 @@ class Myfunction(object):
         # 获取需要添加的ip列表，与防火墙对比
         for x in weblist:
             if x not in fwlist:
-                add_list_temp.append(x.replace('\n', ''))
+                add_list_temp.append(x)
         # 获取需要删除的ip列表,与互联网对比
         for y in fwlist:
             if y not in weblist:
                 new_y = y.replace('address', '')
-                delete_list_temp.append(new_y.replace('\n', ''))
-        # 根据需要是否开启update添加过多数据退出本次程序
-        # if len(add_list) > 500:
-        # exit()
+                delete_list_temp.append(new_y)
+        # 如果添加过多数据退出本次程序，大概率程序错误，写入日志，并直接退出
+        if len(add_list) > 1000:
+        	logs_temp = '判断添加过多IP，请检查防火墙IP数据源是否正常！'
+        	self.write_log(logs_temp)
+        	exit()
+        # 如果删除过多数据退出本次程序，大概率程序错误，写入日志，并直接退出
+        if len(delete_list) > 1000:
+        	logs_temp = '判断删除过多IP，请检查IP网络数据源是否正常！'
+        	self.write_log(logs_temp)
+        	exit()
         return add_list_temp, delete_list_temp
 
     def get_delete_id(self, delete_list_temp, fw_china_ip_dict):

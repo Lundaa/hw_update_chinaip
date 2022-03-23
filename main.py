@@ -69,7 +69,7 @@ class MainProgram(object):
                     # 执行ssh连接，并传入脚本文件
                     Connect().ssh_coon(scripts, self.time_out)
                     # 输出脚本文件执行命令记录
-                    Myfunction().write_script_log(scripts)
+                    Myfunction().write_log(scripts)
                 except:
                     print("更新错误")
             else:
