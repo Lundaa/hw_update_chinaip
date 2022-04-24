@@ -8,8 +8,8 @@ import os
 
 class MyFunction:
     def __init__(self):
-        self.chinaip_config = ReadConfigFile().read_chinaip_config()
-        self.custom_script = ReadConfigFile().read_custom_script()
+        # self.chinaip_config = ReadConfigFile().read_chinaip_config()
+        # self.custom_script = ReadConfigFile().read_custom_script()
         self.fw_china_ip_group = {'ip address-set china_ip_group_1': [], 'ip address-set china_ip_group_2': []}
         self.huawei_cmd_end = ['return\n', 'save\n', 'Y\n', '\n']
 
