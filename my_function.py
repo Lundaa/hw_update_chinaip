@@ -6,14 +6,15 @@ import zipfile
 import os
 
 
-class Myfunction(object):
+class MyFunction:
     def __init__(self):
         self.chinaip_config = ReadConfigFile().read_chinaip_config()
         self.custom_script = ReadConfigFile().read_custom_script()
         self.fw_china_ip_group = {'ip address-set china_ip_group_1': [], 'ip address-set china_ip_group_2': []}
         self.huawei_cmd_end = ['return\n', 'save\n', 'Y\n', '\n']
 
-    def get_ispipipnet_list(self):
+    @staticmethod
+    def get_ispipipnet_list():
         """
             获取的ipip.net在github上免费维护的数据源（较为准确）,更新频率每月
         """
@@ -31,7 +32,8 @@ class Myfunction(object):
         except:
             print("获取错误ipip.net在github维护的chinaip失败，请检查网络连接")
 
-    def get_ispclang_list(self):
+    @staticmethod
+    def get_ispclang_list():
         """
             获取 ispip.clang.cn网站上最新的中国ip段信息，更新频率每日
         :return: 列表
@@ -54,7 +56,8 @@ class Myfunction(object):
         except:
             print("获取错误clang.cn在线ip地址失败，请检查网络连接")
 
-    def write_text(self, list_target):
+    @staticmethod
+    def write_text(list_target):
         """
             生成text文本
         :param list_target: 需要生成的目标列表
@@ -76,8 +79,9 @@ class Myfunction(object):
                     f.write(list_target[i])
             f.close()
 
-    def write_log(self, logs):
-    	"""
+    @staticmethod
+    def write_log(logs):
+        """
             生成logs记录文本
         :param logs: 列表类型，需要写入的信息列表
         """
@@ -86,23 +90,24 @@ class Myfunction(object):
         if not folder:
             os.mkdir('data')
         with open(r'data/run_scripts_logs.txt', 'a', encoding='utf-8') as f:
-	        	if type(logs) == 'list':
-		            for i in range(len(logs) - 1):
-		                if i == 0:
-		                    f.write(
-		                        "脚本运行时间：%s，共计命令：%d" % (
-		                            str(time.strftime("%Y-%m-%d, %H:%M:%S")), len(logs)) + '\n')
-		                    f.write(logs[i])
-		                else:
-		                    f.write(logs[i])
-		         elif type(logs) == 'str':
-		         	f.write("%s,%s" % (str(time.strftime("%Y-%m-%d, %H:%M:%S")),logs))
-		         else:
-		         	f.write('日志记录错误，请检查日志类型！')
+            if type(logs) == 'list':
+                for i in range(len(logs) - 1):
+                    if i == 0:
+                        f.write(
+                            "脚本运行时间：%s，共计命令：%d" % (
+                                str(time.strftime("%Y-%m-%d, %H:%M:%S")), len(logs)) + '\n')
+                        f.write(logs[i])
+                    else:
+                        f.write(logs[i])
+            elif type(logs) == 'str':
+                f.write("%s,%s" % (str(time.strftime("%Y-%m-%d, %H:%M:%S")), logs))
+            else:
+                f.write('日志记录错误，请检查日志类型！')
             f.write('\n')
             f.close()
 
-    def web_alter_ip(self, list_target):
+    @staticmethod
+    def web_alter_ip(list_target):
         """
             将ip列表整形为华为防火墙ip组命令行可插入的格式
         :param list_target: 需要整形的ip
@@ -127,7 +132,7 @@ class Myfunction(object):
         # 先执行删除ip组操作，目的清空原ip组数据
         for ip_list in split_data:
             # 执行添加ip组操作
-            first_run_scripts.append('ip address-set china_ip_group_%d type group\n' % (count))
+            first_run_scripts.append('ip address-set china_ip_group_%d type group\n' % count)
             # 进行清空ip组内IP段操作
             first_run_scripts.append('undo address all\n')
             first_run_scripts.append("description updatetime:%s\n" % (
@@ -141,7 +146,8 @@ class Myfunction(object):
             first_run_scripts.append(cmd)
         return first_run_scripts
 
-    def script_mode(self, script_file):
+    @staticmethod
+    def script_mode(script_file):
         """
             自定义脚本模式
         :return: 返回自定义脚本列表
@@ -154,7 +160,8 @@ class Myfunction(object):
                 scripts_list.append(line)
             return scripts_list
 
-    def un_zip(self, file_name, unzip_path):
+    @staticmethod
+    def un_zip(file_name, unzip_path):
         """
             解压方法
         :param file_name: 需要解压的配置文件的路径+文件名
@@ -166,7 +173,8 @@ class Myfunction(object):
             zip_file.extract(names, unzip_path)
         zip_file.close()
 
-    def read_vrpcfg(self, file_path):
+    @staticmethod
+    def read_vrpcfg(file_path):
         """
             读取解压后的配置文件
         :param file_path: 配置文件路径
@@ -206,14 +214,15 @@ class Myfunction(object):
                     break
         return self.fw_china_ip_group
 
-    def fw_alter_ip_list(self, fw_china_ip_dict):
+    @staticmethod
+    def fw_alter_ip_list(fw_china_ip_dict):
         """
             将配置文件数据整形
-        :param fw_china_ip_group: 防火墙中的chinaip字典
+        :param fw_china_ip_dict: 防火墙中的chinaip字典
         :return: 防火墙中的chinaip列表
         """
         # 整形数据为huawei_alter_ip输出格式的数据
-        fw_chian_ip = []
+        fw_china_ip = []
         for v in fw_china_ip_dict.values():
             for item in v:
                 count = 0
@@ -224,8 +233,8 @@ class Myfunction(object):
                             x = item[7:d + 1]
                             # print(d)
                             new_item = item.replace(x, ' ')
-                            fw_chian_ip.append(new_item)
-        return fw_chian_ip
+                            fw_china_ip.append(new_item)
+        return fw_china_ip
 
     def compare_list(self, weblist, fwlist):
         """
@@ -243,18 +252,19 @@ class Myfunction(object):
                 new_y = y.replace('address', '')
                 delete_list_temp.append(new_y)
         # 如果添加过多数据退出本次程序，大概率程序错误，写入日志，并直接退出
-        if len(add_list) > 1000:
-        	logs_temp = '判断添加过多IP，请检查防火墙IP数据源是否正常！'
-        	self.write_log(logs_temp)
-        	exit()
+        if len(add_list_temp) > 2000:
+            logs_temp = '判断添加过多IP，请检查防火墙IP数据源是否正常！'
+            self.write_log(logs_temp)
+            exit()
         # 如果删除过多数据退出本次程序，大概率程序错误，写入日志，并直接退出
-        if len(delete_list) > 1000:
-        	logs_temp = '判断删除过多IP，请检查IP网络数据源是否正常！'
-        	self.write_log(logs_temp)
-        	exit()
+        if len(delete_list_temp) > 1000:
+            logs_temp = '判断删除过多IP，请检查IP网络数据源是否正常！'
+            self.write_log(logs_temp)
+            exit()
         return add_list_temp, delete_list_temp
 
-    def get_delete_id(self, delete_list_temp, fw_china_ip_dict):
+    @staticmethod
+    def get_delete_id(delete_list_temp, fw_china_ip_dict):
         """
             根据delete_list_temp获取防火墙对应ip组内ip所属id
         :param delete_list_temp: 删除列表temp
@@ -280,7 +290,8 @@ class Myfunction(object):
                                         final_delete_group2.append('undo address %s' % new_id)
         return final_delete_group1, final_delete_group2
 
-    def get_add_list(self, add_list_temp):
+    @staticmethod
+    def get_add_list(add_list_temp):
         """
             目的为将添加数据均分至两个组
         :param add_list_temp: 添加列表temp
@@ -298,8 +309,8 @@ class Myfunction(object):
     def update_ip_group(self, final_add, final_delete):
         """
             生成更新的脚本
-        :param add_list:需要添加的ip段，元组类型
-        :param delete_list: 需要删除的ip段列表
+        :param final_add:需要添加的ip段，元组类型
+        :param final_delete: 需要删除的ip段列表
         :return: 返回更新脚本，列表类型
         """
         update_fw_chinaip = list(['sys\n'])
