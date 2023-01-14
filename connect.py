@@ -21,7 +21,7 @@ class Connect(object):
             key = paramiko.AutoAddPolicy()
             ssh.set_missing_host_key_policy(key)
             # ssh连接
-            ssh.connect(self.addr, self.port, self.username, self.password, timeout=2)
+            ssh.connect(self.addr, self.port, self.username, self.password, timeout=5)
             print('连接成功！')
             ssh_shell = ssh.invoke_shell()
             # 运行脚本
