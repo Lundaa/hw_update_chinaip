@@ -34,18 +34,24 @@
 
 ### 2、确认python环境已部署
 构建环境使用*python3*，使用额外的module，请使用pip命令安装这些模块：
->pip install urllib3  
->pip install paramiko  
->pip install requests
 
-**注意**：如果使用*Linux*运行，因*Linux*默认环境为python2，请按以下命令操作，全部执行完后cd至程序目录，使用*python3 main.py*执行脚本
->yum install python3  
->yum install epel-release  
->yum install python-pip  
->pip3 install --upgrade pip  
->pip3 install urllib3  
->pip3 install paramiko   
->pip3 install requests 
+```bash
+pip install urllib3  
+pip install paramiko  
+pip install requests
+```
+
+**注意**：如果使用*Linux*运行，因*Linux*默认环境为*python2*，请按以下命令操作，全部执行完后cd至程序目录，使用*python3 main.py*执行脚本
+
+```bash
+yum install python3  
+yum install epel-release  
+yum install python-pip  
+pip3 install --upgrade pip  
+pip3 install urllib3  
+pip3 install paramiko   
+pip3 install requests 
+```
 
 ### 3、第一次运行
 第一次打开会判断*lock.ini*文件是否存在（源码默认存在*lock.ini*，请根据需要删除），不存在即为第一次运行本程序，默认新建两个ip组，并向内插入数据 
